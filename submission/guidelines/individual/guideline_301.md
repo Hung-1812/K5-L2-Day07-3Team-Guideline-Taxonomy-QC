@@ -130,25 +130,18 @@ Quy tắc vẽ:
 
 ## 6. Ca khó (bảng quyết định nhanh)
 
-| Tình huống | Cách xử lý |
-|---|---|
-| Phân vân `car` hay `van` (hatchback/wagon, SUV, minivan, minibus nhỏ) | Dựa vào kiểu thân xe: ô tô con/SUV/wagon → `car`; xe giao hàng thân thùng kín hoặc minibus nhỏ → `van`. Không dùng riêng dấu hiệu có/không có cửa sổ sau để quyết định. Xe khách cỡ lớn không thuộc hai lớp này (xem mục 2). Còn phân vân → chọn lớp gần nhất và tick `can_review`. |
-| Pickup có hàng, nắp thùng hoặc chở vật cồng kềnh | Pickup dân dụng nhận ra được qua cabin riêng và thùng phía sau → `car`, dù đang chở hàng, ngựa hoặc có nắp phủ thùng. Không kéo box xe sang hàng hóa. Xe tải có thân chở hàng chuyên dụng (ví dụ xe tải nhỏ cabin-over) → `truck`; nếu dáng xe không đủ rõ để phân biệt, tick `can_review`. |
-| Xe đầu kéo chở ô tô | Gán một box `truck` cho đầu kéo và kết cấu rơ-moóc/chở xe; mỗi ô tô nhìn rõ trên sàn chở được gán box `car` riêng, không gộp vào box xe tải. |
-| Xe buýt / xe khách cỡ lớn | Không có lớp tương ứng: **không** gán box xe, không ép vào `truck`/`van`. Người nhìn thấy bên ngoài vẫn gán `person`. Minibus nhỏ có kiểu thân xe thuộc `van` thì gán `van`. |
-| Tuk-tuk, xe lam, auto-rickshaw, xích lô / cyclo | Đây là phương tiện ba bánh ngoài taxonomy: **không** gán box phương tiện. Gán `person` cho người đi bộ, người lái và hành khách nhìn thấy được; không gộp người vào box xe. |
-| Xe đạp / xe đạp điện | Xe đạp không có lớp: **không** gán box xe, nhưng gán `person` cho người đạp. Chỉ gán `motorcycle` khi phương tiện thực sự có kiểu dáng xe máy; nếu xe điện khó phân biệt, tick `can_review`. |
-| Xe máy có sidecar | Gán một box `motorcycle` bao phần nhìn thấy của cả xe máy và sidecar gắn liền; người ngồi trên xe có box `person` riêng. |
-| Xe máy chở hàng hoặc bị che bởi hàng | Gán box `motorcycle` quanh phần xe nhìn thấy, không bao hàng hóa; gán người riêng. Đặt `occluded_level` theo phần xe bị che như mục 3.1. |
-| Người lái / ngồi sau xe máy, kể cả trẻ em | Mỗi người nhìn thấy được có box `person` riêng; xe có box `motorcycle` riêng. Hai box được phép chồng lên nhau. |
-| Nhiều xe máy hoặc người đứng sát, che nhau | Tách từng vật nhận ra được thành box riêng, dù box chồng nhau. Chỉ dùng `ignore_region` cho cụm không thể tách đáng tin cậy; không phủ một vùng lớn lên các vật đã gán riêng. |
-| Người đẩy xe, xe nôi hoặc xe lăn | Gán `person`; xe đẩy/xe nôi/xe lăn không có lớp nên không gán box. |
-| Chuyển động nhòe, thiếu sáng hoặc lóa | Chỉ gán người/xe còn nhận ra được. Vệt nhòe không xác định được vật thì không gán; dùng `ignore_region` gọn quanh cụm không thể phân biệt, không phủ cả ảnh nếu vẫn có vật rõ. |
-| Phản chiếu trên gương/kính/vũng nước; người hoặc xe trong áp phích, màn hình, tranh | **Không** gán đối tượng chỉ xuất hiện dưới dạng phản chiếu hoặc hình ảnh. |
-| Tượng, ma-nơ-canh, mô hình xe trong tủ kính hoặc xe làm tượng/đài tưởng niệm | **Không** gán vật thể mô phỏng, kể cả có hình dáng người/xe thật. Ngược lại, xe thật đang đỗ hoặc tham gia diễu hành vẫn gán theo lớp, dù được trang trí hoặc trưng bày. |
-| Chỉ thấy một phần xe/người sau vật che hoặc ở mép ảnh | Gán phần nhìn thấy nếu vẫn nhận ra được lớp và đạt ngưỡng 4.5; đặt `occluded_level` và `truncated` đúng trường hợp. Không đoán phần khuất. |
-| Vật quá xa/nhỏ hoặc không chắc có nên gán | Áp dụng ngưỡng 4.5; nếu nằm trong cụm vật nhỏ không thể tách thì dùng `ignore_region` theo mục 5. |
-| Một vật bị vẽ box hai lần | Xóa box thừa, giữ một box ôm sát phần nhìn thấy của vật. |
+| Ảnh | v0 chưa trả lời rõ | Quyết định |
+|---|---|---|
+| `img_002.jpg` | Xe đầu kéo chở ô tô: gộp tất cả thành một box hay tách từng xe? | Một box `truck` cho đầu kéo và rơ-moóc; mỗi ô tô nhìn rõ trên sàn chở có box `car` riêng. |
+| `img_004.jpg`, `img_006.jpg`, `img_035.jpg` | Tuk-tuk, cyclo và auto-rickshaw trông giống phương tiện có động cơ nhưng không có lớp riêng. | Không gán box phương tiện ngoài taxonomy; gán `person` riêng cho người nhìn thấy được. Không ép xe ba bánh vào `motorcycle`, `car` hoặc `truck`. |
+| `img_005.jpg`, `img_021.jpg`, `img_030.jpg` | Giao thông đông: gán từng xe/người chồng lấp hay gom cả vùng? | Tách box cho từng người và xe nhận ra được, cho phép box chồng. Chỉ dùng `ignore_region` cho cụm thực sự không thể tách đáng tin cậy. |
+| `img_009.jpg`, `img_032.jpg` | Xe khách/minibus nằm giữa lớp `van` và vật ngoài taxonomy. | Minibus nhỏ có kiểu thân xe thuộc `van` thì gán `van`; xe buýt/xe khách cỡ lớn không có lớp thì không gán box xe. Người nhìn rõ vẫn gán `person`. |
+| `img_012.jpg`, `img_027.jpg`, `img_028.jpg`, `img_037.jpg` | Pickup chở hàng, có đồ trên thùng hoặc gắn nắp thùng: `car` hay `truck`, box có ôm hàng không? | Pickup dân dụng có cabin riêng và thùng phía sau là `car`, không phụ thuộc hàng đang chở; box không bao hàng. Xe tải thân chở hàng chuyên dụng là `truck`; nếu không phân biệt chắc chắn thì tick `can_review`. |
+| `img_014.jpg` | Người và xe bị nhòe do chuyển động: có đoán box theo vệt mờ không? | Chỉ gán vật còn nhận ra được. Không đoán vật từ vệt nhòe; nếu một cụm không thể phân biệt thì dùng `ignore_region` gọn quanh cụm. |
+| `img_017.jpg`, `img_019.jpg`, `img_027.jpg`, `img_033.jpg`, `img_038.jpg` | Tượng, ma-nơ-canh, xe mô hình và xe thật được trang trí/trưng bày dễ bị nhầm. | Không gán tượng, ma-nơ-canh, mô hình xe hoặc xe làm tượng/đài tưởng niệm. Gán xe thật đang đỗ hoặc diễu hành theo lớp tương ứng. |
+| `img_018.jpg`, `img_020.jpg` | Người/xe xuất hiện trên biển quảng cáo hoặc trong gương có phải đối tượng cần gán? | Không gán hình in/hiển thị trên biển, áp phích hay ảnh phản chiếu; chỉ gán người/xe thật trong cảnh. |
+| `img_022.jpg`, `img_029.jpg` | Sidecar hoặc hàng cồng kềnh làm thay đổi hình dạng xe máy: box `motorcycle` bao phần nào? | Sidecar gắn liền được bao cùng xe trong một box `motorcycle`; hàng hóa không thuộc box. Gán người riêng và đặt `occluded_level` nếu hàng che xe. |
+| `img_007.jpg`, `img_036.jpg` | Xe tải nhỏ trong kho/đường phố có thể trông như `van`, nhất là khi thiếu sáng hoặc thân xe bị che. | Xe tải có cabin-over/thân chở hàng chuyên dụng là `truck`; xe thùng kín cỡ nhỏ/minivan là `van`. Chỉ dựa vào phần nhìn thấy; nếu không phân biệt chắc chắn thì tick `can_review`. |
 
 ## 7. Quy trình làm việc
 

@@ -1,0 +1,4 @@
+{
+  "kind": "semantic",
+  "summary": "Hiệu chỉnh guideline v1.0 thành v1.1 sau calibration vòng 1: thêm bảng phân biệt cặp dễ nhầm theo số bánh, động cơ, cấu trúc thân (R-04); làm rõ tách box người và box xe (R-05); cách ước lượng occluded_level và phân biệt che khuất với mờ, thiếu sáng, ngoài khung (R-10); truncated chỉ khi vật bị khung ảnh cắt cụt (R-11); siết điều kiện dùng ignore_region cho cảnh đông (R-12); lý do can_review có cấu trúc (R-14); quy trình gán hai lượt (R-16). Taxonomy giữ nguyên v1.0."
+}
